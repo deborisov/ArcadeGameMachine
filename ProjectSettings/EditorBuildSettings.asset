@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Menu.unity
+    guid: 81d2cae05018e794a8c611b31ebf7f9a
+  - enabled: 1
+    path: Assets/Scenes/Arcanoid.unity
+    guid: 0808440941f3d3d41929fc4ab18d986d
+  - enabled: 1
+    path: Assets/Scenes/FlappyFrog.unity
+    guid: f0c272b3b0b0e2641ba13193b0fef67e
+  m_configObjects: {}
