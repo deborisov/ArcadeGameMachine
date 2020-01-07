@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-public class GameManager: MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     public int lives;
     public int score;
@@ -19,7 +19,7 @@ public class GameManager: MonoBehaviour
     void Start()
     {
         Vector2 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
-        leftEdge.size = rightEdge.size = new Vector2(1, 2*screenBounds.y +1.5f);
+        leftEdge.size = rightEdge.size = new Vector2(1, 2 * screenBounds.y + 1.5f);
         topEdge.size = bottomEdge.size = new Vector2(2 * screenBounds.x + 1.5f, 1);
         topEdge.offset = new Vector2(0, screenBounds.y + 0.5f);
         bottomEdge.offset = new Vector2(0, -screenBounds.y - 1f);
@@ -29,12 +29,6 @@ public class GameManager: MonoBehaviour
         scoreText.text = "Score: " + score;
         gameOverPannel.SetActive(false);
         numberOfBricks = GameObject.FindGameObjectsWithTag("Brick").Length;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void ChangeLives(int delta)
@@ -74,8 +68,8 @@ public class GameManager: MonoBehaviour
         SceneManager.LoadScene("Arcanoid");
     }
 
-    public void Quit()
+    public void Menu()
     {
-        Application.Quit();
+        SceneManager.LoadScene("Menu");
     }
 }
