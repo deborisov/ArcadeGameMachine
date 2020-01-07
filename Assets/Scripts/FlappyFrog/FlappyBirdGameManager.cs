@@ -2,18 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class FlappyBirdGameManager : MonoBehaviour
 {
     public delegate void GameDelegate();
     public static event GameDelegate OnGameStarted;
     public static event GameDelegate OnGameOverConfirmed;
+
     int score = 0;
-    bool gameOver = false;
+    bool gameOver = true;
+
     public bool GameOver { get { return gameOver; } }
     public static FlappyBirdGameManager Instance;
     public GameObject countdownPage;
     public GameObject gameOverPage;
+
     enum PageState
     {
         None,
@@ -32,6 +36,40 @@ public class FlappyBirdGameManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+    }
+
+    private void OnEnable()
+    {
+        CountDown.OnTapHappened += OnTapHappened;
+        TapController.OnPlayerDied += OnPlayerDied;
+        TapController.OnPlayerScored += OnPlayerScored;
+    }
+
+    private void OnDisable()
+    {
+        CountDown.OnTapHappened -= OnTapHappened;
+        TapController.OnPlayerDied -= OnPlayerDied;
+        TapController.OnPlayerScored -= OnPlayerScored;
+    }
+
+    void OnTapHappened()
+    {
+        SetPageState(PageState.None);
+        OnGameStarted();
+        score = 0;
+        gameOver = false;
+    }
+
+    void OnPlayerDied()
+    {
+        gameOver = true;
+        SetPageState(PageState.GameOver);
+    }
+
+    void OnPlayerScored()
+    {
+        score++;
+        scoreText.text = score.ToString();
     }
 
     void SetPageState(PageState state)
@@ -57,5 +95,10 @@ public class FlappyBirdGameManager : MonoBehaviour
     {
         OnGameOverConfirmed();
         scoreText.text = "0";
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene("FlappyFrog");
     }
 }

@@ -14,7 +14,6 @@ public class PauseMenu : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Debug.Log("LOL");
             if (!GameIsOnPause)
             {
                 Pause();

@@ -7,20 +7,19 @@ using TMPro;
 public class CountDown : MonoBehaviour
 {
     public TextMeshProUGUI countdown;
-
+    public delegate void TapHappened();
+    public static event TapHappened OnTapHappened;
     private void OnEnable()
     {
         countdown = GetComponent<TextMeshProUGUI>();
-        countdown.text = "3";
+        countdown.text = "Tap to start";
     }
 
-    IEnumerator Countdown()
+    private void Update()
     {
-        int count = 3;
-        for (int i = count; i > 0; --i)
+        if (Input.touchCount > 0)
         {
-            countdown.text = i.ToString();
-            yield return new WaitForSeconds(1);
+            OnTapHappened();
         }
     }
 }
