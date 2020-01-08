@@ -26,7 +26,7 @@ public class FlappyBirdGameManager : MonoBehaviour
     }
 
     public TextMeshProUGUI scoreText;
-    // Start is called before the first frame update
+
     void Start()
     {
         scoreText.text = "0";

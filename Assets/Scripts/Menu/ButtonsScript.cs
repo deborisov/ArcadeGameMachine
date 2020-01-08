@@ -14,4 +14,9 @@ public class ButtonsScript : MonoBehaviour
     {
         SceneManager.LoadScene("FlappyFrog");
     }
+
+    public void Play2dPong()
+    {
+        SceneManager.LoadScene("2dPong");
+    }
 }
