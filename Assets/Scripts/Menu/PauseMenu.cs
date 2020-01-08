@@ -9,7 +9,10 @@ public class PauseMenu : MonoBehaviour
     public GameObject pauseUI;
     public GameObject pauseBtn;
 
-    // Update is called once per frame
+    private void Start()
+    {
+        GameIsOnPause = false;
+    }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Ball2DScript : MonoBehaviour
 {
-    private Rigidbody2D rb;
+    public Rigidbody2D rb;
     public float speed;
     void Start()
     {
@@ -12,16 +12,14 @@ public class Ball2DScript : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        
+        rb = GetComponent<Rigidbody2D>();
     }
 
     void ThrowBall()
     {
         rb.AddForce(Random.insideUnitCircle.normalized * speed);
-        Debug.Log("Lol");
     }
     private void OnEnable()
     {
@@ -30,6 +28,6 @@ public class Ball2DScript : MonoBehaviour
 
     private void OnDisable()
     {
-        StartTap.OnTapHappened -= ThrowBall;
+        twoDPongGameManager.OnGameStarted -= ThrowBall;
     }
 }
