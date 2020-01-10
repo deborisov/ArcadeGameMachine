@@ -4,22 +4,27 @@ using UnityEngine;
 
 public class Joystick : MonoBehaviour
 {
-    public Transform player;
-    public float speed;
     private bool touchStart = false;
     private Vector2 startPoint, endPoint;
     public Transform innerCircle;
     public Transform outerCircle;
-    private Vector2 direction;
-    public Vector2 Direction
-    {
-        get
-        {
-            return direction;
-        }
-    }
     public delegate void MakeMove(Vector2 d);
     public static event MakeMove OnMakeMove;
+
+    private void OnEnable()
+    {
+        PauseMenu.OnPause += Hide;
+    }
+
+    private void OnDisable()
+    {
+        PauseMenu.OnPause -= Hide;
+    }
+    void Hide()
+    {
+        innerCircle.GetComponent<SpriteRenderer>().enabled = false;
+        outerCircle.GetComponent<SpriteRenderer>().enabled = false;
+    }
 
     void Update()
     {
@@ -47,14 +52,13 @@ public class Joystick : MonoBehaviour
         if (touchStart)
         {
             Vector2 offset = endPoint - startPoint;
-            direction = Vector2.ClampMagnitude(offset, 1.0f);
+            Vector2 direction = Vector2.ClampMagnitude(offset, 1.0f);
             innerCircle.position = new Vector2(startPoint.x + direction.x, startPoint.y + direction.y);
             OnMakeMove(direction);
         }
         else
         {
-            innerCircle.GetComponent<SpriteRenderer>().enabled = false;
-            outerCircle.GetComponent<SpriteRenderer>().enabled = false;
+            Hide();
         }
     }
 }

@@ -7,15 +7,10 @@ public class PannelScript : MonoBehaviour
 {
     public float speed;
     public GameManager gm;
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
 
-    // Update is called once per frame
     void Update()
     {
-        if (gm.gameOver)
+        /*if (gm.gameOver)
         {
             return;
         }
@@ -31,9 +26,23 @@ public class PannelScript : MonoBehaviour
             {
                 transform.Translate(Vector2.left * Time.deltaTime * speed);
             }
-        }
-        //float horizontal = Input.GetAxis("Horizontal");
+        }*/
+    }
 
+    private void OnEnable()
+    {
+        Joystick.OnMakeMove += MakeMove;
+    }
+
+    private void OnDisable()
+    {
+        Joystick.OnMakeMove -= MakeMove;
+    }
+
+    void MakeMove(Vector2 dir)
+    {
+        Vector2 direction = new Vector2(dir.x, 0);
+        transform.Translate(direction * speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D other)

@@ -19,7 +19,15 @@ public class Ball2DScript : MonoBehaviour
 
     void ThrowBall()
     {
-        rb.AddForce(Random.insideUnitCircle.normalized * speed);
+        Vector2 direction = new Vector2(0,0);
+        float x = direction.x, y = direction.y;
+        do
+        {
+            direction = Random.insideUnitCircle.normalized;
+            x = direction.x;
+            y = direction.y;
+        } while (direction == new Vector2(0, 0) || x < y && x > -y || x > y && x < -y);
+        rb.AddForce(direction * speed);
     }
     private void OnEnable()
     {

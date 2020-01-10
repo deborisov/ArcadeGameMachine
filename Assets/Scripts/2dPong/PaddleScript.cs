@@ -42,7 +42,6 @@ public class PaddleScript : MonoBehaviour
     void MakeMove(Vector2 dir)
     {
         Vector2 direction = new Vector2(dir.y, 0);
-        Debug.Log(direction.ToString());
         transform.Translate(direction * speed * Time.deltaTime);
     }
 
