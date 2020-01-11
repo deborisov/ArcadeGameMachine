@@ -6,6 +6,10 @@ public class Ball2DScript : MonoBehaviour
 {
     public Rigidbody2D rb;
     public float speed;
+    public delegate void GameDelegate();
+    public static event GameDelegate OnPlayerScored;
+    public static event GameDelegate OnPlayerDied;
+
     void Start()
     {
         transform.position = new Vector2(0, 0);
@@ -29,13 +33,36 @@ public class Ball2DScript : MonoBehaviour
         } while (direction == new Vector2(0, 0) || x < y && x > -y || x > y && x < -y);
         rb.AddForce(direction * speed);
     }
+
+    void PlaceOnStart()
+    {
+        rb.velocity = new Vector3(0, 0, 0);
+        transform.position = new Vector2(0, 0);
+    }
+
     private void OnEnable()
     {
         twoDPongGameManager.OnGameStarted += ThrowBall;
+        OnPlayerScored += PlaceOnStart;
+        OnPlayerDied += () => rb.simulated = false;
     }
 
     private void OnDisable()
     {
         twoDPongGameManager.OnGameStarted -= ThrowBall;
+        OnPlayerScored -= PlaceOnStart;
+        OnPlayerDied -= () => rb.simulated = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("LeftEdge"))
+        {
+            OnPlayerDied();
+        }
+        if (other.CompareTag("RightEdge"))
+        {
+            OnPlayerScored();
+        }
     }
 }

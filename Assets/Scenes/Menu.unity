@@ -1223,7 +1223,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Arcanoid
+  m_text: Arkanoid
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0626cbdad1d096a468799ee619ab1ab2, type: 2}
   m_sharedMaterial: {fileID: 21598429571674424, guid: 0626cbdad1d096a468799ee619ab1ab2,

@@ -9,6 +9,8 @@ TagManager:
   - ExtraLife
   - DeadZone
   - ScoreZone
+  - LeftEdge
+  - RightEdge
   layers:
   - Default
   - TransparentFX

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class twoDPongGameManager : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class twoDPongGameManager : MonoBehaviour
     public GameObject GameOverPage;
     public delegate void GameDelegate();
     public static event GameDelegate OnGameStarted;
-    public twoDPongGameManager Instance;
+    public static twoDPongGameManager Instance;
     int score = 0;
     bool gameOver = true;
     public BoxCollider2D leftEdge, rightEdge, topEdge, bottomEdge;
@@ -45,19 +46,34 @@ public class twoDPongGameManager : MonoBehaviour
     private void OnEnable()
     {
         StartTap.OnTapHappened += OnTapHappened;
+        Ball2DScript.OnPlayerScored += IncrementScoreAndSetStart;
+        Ball2DScript.OnPlayerDied += OnPlayerDied;
     }
 
     private void OnDisable()
     {
         StartTap.OnTapHappened -= OnTapHappened;
+        Ball2DScript.OnPlayerScored -= IncrementScoreAndSetStart;
+        Ball2DScript.OnPlayerDied -= OnPlayerDied;
+    }
+
+    private void IncrementScoreAndSetStart()
+    {
+        ++score;
+        scoreText.text = "Score " + score;
+        SetPageState(PageState.Start);
+    }
+
+    private void OnPlayerDied()
+    {
+        gameOver = true;
+        SetPageState(PageState.GameOver);
     }
 
     void OnTapHappened()
     {
         SetPageState(PageState.None);
         OnGameStarted();
-        score = 0;
-        gameOver = false;
     }
 
     void SetPageState(PageState state)
@@ -79,8 +95,8 @@ public class twoDPongGameManager : MonoBehaviour
         }
     }
 
-    void Update()
+    public void Restart()
     {
-        
+        SceneManager.LoadScene("2dPong");
     }
 }
