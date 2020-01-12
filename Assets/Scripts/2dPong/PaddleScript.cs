@@ -7,14 +7,16 @@ public class PaddleScript : MonoBehaviour
     public bool isRight;
     private Vector2 screenBounds;
     private float objectWidth;
-    private float objectHeight;
     public GameObject ball;
-    public float speed;
+    public float ratedSpeed;
+    private float currentSpeed;
+    private float currentTime = 0;
+    public float secondsToSlowPaddle = 1, removedSpeed = 5f / 240;
 
     void Start()
     {
+        currentSpeed = ratedSpeed;
         objectWidth = transform.GetComponent<SpriteRenderer>().bounds.size.x / 2;
-        objectHeight = transform.GetComponent<SpriteRenderer>().bounds.size.y / 2;
         screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
         if (isRight)
         {
@@ -32,24 +34,39 @@ public class PaddleScript : MonoBehaviour
         {
             Joystick.OnMakeMove += MakeMove;
         }
+        twoDPongGameManager.OnGameStarted += NormalizeTimeAndSpeed;
     }
 
     private void OnDisable()
     {
         Joystick.OnMakeMove -= MakeMove;
+        twoDPongGameManager.OnGameStarted -= NormalizeTimeAndSpeed;
     }
 
     void MakeMove(Vector2 dir)
     {
         Vector2 direction = new Vector2(dir.y, 0);
-        transform.Translate(direction * speed * Time.deltaTime);
+        transform.Translate(direction * currentSpeed * Time.deltaTime);
     }
 
     void Update()
     {
+        currentTime += Time.deltaTime;
         if (isRight)
         {
             AIForRight();
+            SlowDownPaddle();
+        }
+    }
+
+    void SlowDownPaddle()
+    {
+        if (currentTime > secondsToSlowPaddle)
+        {
+            currentSpeed -= removedSpeed;
+            currentTime -= secondsToSlowPaddle;
+            Debug.Log(currentSpeed);
+            Debug.Log(Time.timeScale);
         }
     }
 
@@ -58,14 +75,21 @@ public class PaddleScript : MonoBehaviour
         Vector3 vel = ball.GetComponent<Rigidbody2D>().velocity;
         if (vel.x > 0)
         {
-            if (ball.transform.position.y > transform.position.y)
+            /*if (ball.transform.position.y > transform.position.y)
             {
-                transform.Translate(Vector2.right * Time.deltaTime * speed);
+                transform.Translate(Vector2.right * Time.deltaTime * currentSpeed);
             }
             else
             {
-                transform.Translate(Vector2.left * Time.deltaTime * speed);
-            }
+                transform.Translate(Vector2.left * Time.deltaTime * currentSpeed);
+            }*/
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, ball.transform.position.y, transform.position.z), currentSpeed * Time.deltaTime);
         }
+    }
+
+    void NormalizeTimeAndSpeed()
+    {
+        currentSpeed = ratedSpeed;
+        currentTime = 0;
     }
 }

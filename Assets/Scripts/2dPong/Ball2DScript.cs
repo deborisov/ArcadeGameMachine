@@ -34,6 +34,11 @@ public class Ball2DScript : MonoBehaviour
         rb.AddForce(direction * speed);
     }
 
+    void StopSimulating()
+    {
+        rb.simulated = false;
+    }
+
     void PlaceOnStart()
     {
         rb.velocity = new Vector3(0, 0, 0);
@@ -44,14 +49,14 @@ public class Ball2DScript : MonoBehaviour
     {
         twoDPongGameManager.OnGameStarted += ThrowBall;
         OnPlayerScored += PlaceOnStart;
-        OnPlayerDied += () => rb.simulated = false;
+        OnPlayerDied += StopSimulating;
     }
 
     private void OnDisable()
     {
         twoDPongGameManager.OnGameStarted -= ThrowBall;
         OnPlayerScored -= PlaceOnStart;
-        OnPlayerDied -= () => rb.simulated = false;
+        OnPlayerDied -= StopSimulating;
     }
 
     private void OnTriggerEnter2D(Collider2D other)

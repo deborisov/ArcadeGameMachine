@@ -14,6 +14,8 @@ public class twoDPongGameManager : MonoBehaviour
     int score = 0;
     bool gameOver = true;
     public BoxCollider2D leftEdge, rightEdge, topEdge, bottomEdge;
+    private float currentTime = 0;
+    public float secondsToHastenGame = 1, addedHaste = 1f / 60;
     public bool GameOver { get { return gameOver; } }
 
     enum PageState
@@ -48,6 +50,7 @@ public class twoDPongGameManager : MonoBehaviour
         StartTap.OnTapHappened += OnTapHappened;
         Ball2DScript.OnPlayerScored += IncrementScoreAndSetStart;
         Ball2DScript.OnPlayerDied += OnPlayerDied;
+        OnGameStarted += ZeroizeTime;
     }
 
     private void OnDisable()
@@ -55,6 +58,17 @@ public class twoDPongGameManager : MonoBehaviour
         StartTap.OnTapHappened -= OnTapHappened;
         Ball2DScript.OnPlayerScored -= IncrementScoreAndSetStart;
         Ball2DScript.OnPlayerDied -= OnPlayerDied;
+        OnGameStarted -= ZeroizeTime;
+    }
+
+    private void Update()
+    {
+        currentTime += Time.deltaTime;
+        if (currentTime > secondsToHastenGame)
+        {
+            Time.timeScale += addedHaste;
+            currentTime -= secondsToHastenGame;
+        }
     }
 
     private void IncrementScoreAndSetStart()
@@ -98,5 +112,11 @@ public class twoDPongGameManager : MonoBehaviour
     public void Restart()
     {
         SceneManager.LoadScene("2dPong");
+    }
+
+    private void ZeroizeTime()
+    {
+        currentTime = 0;
+        Time.timeScale = 1;
     }
 }
