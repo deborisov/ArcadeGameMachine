@@ -10,15 +10,23 @@ public class Joystick : MonoBehaviour
     public Transform outerCircle;
     public delegate void MakeMove(Vector2 d);
     public static event MakeMove OnMakeMove;
+    public static bool IsAwake = true;
+
+    public void Awake()
+    {
+        IsAwake = true;
+    }
 
     private void OnEnable()
     {
         PauseMenu.OnPause += Hide;
+        Ball2DScript.OnPlayerDied += Hide;
     }
 
     private void OnDisable()
     {
         PauseMenu.OnPause -= Hide;
+        Ball2DScript.OnPlayerDied -= Hide;
     }
     void Hide()
     {
@@ -28,13 +36,17 @@ public class Joystick : MonoBehaviour
 
     void Update()
     {
+        if (!IsAwake) return;
         if (Input.GetMouseButtonDown(0))
         {
             startPoint = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
             innerCircle.position = startPoint;
             outerCircle.position = startPoint;
-            innerCircle.GetComponent<SpriteRenderer>().enabled = true;
-            outerCircle.GetComponent<SpriteRenderer>().enabled = true;
+            if (PlayerPrefs.GetInt("Joystick") == 1)
+            {
+                innerCircle.GetComponent<SpriteRenderer>().enabled = true;
+                outerCircle.GetComponent<SpriteRenderer>().enabled = true;
+            }
         }
         if (Input.GetMouseButton(0))
         {
@@ -49,11 +61,15 @@ public class Joystick : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!IsAwake) return;
         if (touchStart)
         {
             Vector2 offset = endPoint - startPoint;
             Vector2 direction = Vector2.ClampMagnitude(offset, 1.0f);
-            innerCircle.position = new Vector2(startPoint.x + direction.x, startPoint.y + direction.y);
+            if (PlayerPrefs.GetInt("Joystick") == 1)
+            {
+                innerCircle.position = new Vector2(startPoint.x + direction.x, startPoint.y + direction.y);
+            }
             OnMakeMove(direction);
         }
         else

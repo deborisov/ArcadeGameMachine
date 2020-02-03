@@ -81,6 +81,7 @@ public class twoDPongGameManager : MonoBehaviour
     private void OnPlayerDied()
     {
         gameOver = true;
+        Joystick.IsAwake = false;
         SetPageState(PageState.GameOver);
     }
 
@@ -88,6 +89,7 @@ public class twoDPongGameManager : MonoBehaviour
     {
         SetPageState(PageState.None);
         OnGameStarted();
+        Joystick.IsAwake = true;
     }
 
     void SetPageState(PageState state)

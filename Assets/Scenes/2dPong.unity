@@ -292,13 +292,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 153566206}
-  m_LocalRotation: {x: 0, y: 0, z: 0.008726558, w: 0.999962}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 747450263}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &153566208
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -573,7 +573,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isRight: 1
   ball: {fileID: 1700706264}
-  speed: 4
+  ratedSpeed: 4
+  secondsToSlowPaddle: 1
+  removedSpeed: 0.016666668
 --- !u!114 &297090060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -628,24 +630,24 @@ PolygonCollider2D:
       - {x: 9.13, y: 0.25}
       - {x: 9.08, y: 0.42999998}
       - {x: 9.059999, y: 0.47}
-      - {x: 8.98, y: 0.65}
+      - {x: 8.773243, y: -0.074197054}
       - {x: 8.95, y: 0.7}
-      - {x: 8.889999, y: 0.78999996}
+      - {x: 8.890001, y: -0.14110684}
       - {x: 8.82, y: 0.87}
-      - {x: 8.599999, y: 1.09}
-      - {x: 8.44, y: 1.1999999}
-      - {x: 8.2, y: 1.31}
-      - {x: 8.08, y: 1.35}
-      - {x: 8, y: 1.37}
-      - {x: 7.8199997, y: 1.4}
+      - {x: 8.7033825, y: 0.055445433}
+      - {x: 8.646761, y: 0.475806}
+      - {x: 8.510143, y: 0.48235774}
+      - {x: 8.390142, y: 0.52235484}
+      - {x: 8.10338, y: 0.85271716}
+      - {x: 7.1997232, y: 0.6758112}
       - {x: 2.5835972, y: 2.4587438}
       - {x: -3.7920036, y: 2.4843893}
-      - {x: -8, y: 1.4}
-      - {x: -8.13, y: 1.38}
-      - {x: -8.2699995, y: 1.35}
-      - {x: -8.41, y: 1.3}
+      - {x: -8.000002, y: 0.77926755}
+      - {x: -8.130002, y: 0.6558049}
+      - {x: -8.270001, y: 0.83273053}
+      - {x: -8.410004, y: 0.67926526}
       - {x: -8.59, y: 1.22}
-      - {x: -8.67, y: 1.17}
+      - {x: -8.566626, y: 0.75616956}
       - {x: -8.82, y: 1.06}
       - {x: -9, y: 0.87}
       - {x: -9.04, y: 0.83}
@@ -1636,6 +1638,8 @@ MonoBehaviour:
   rightEdge: {fileID: 405460575}
   topEdge: {fileID: 153566208}
   bottomEdge: {fileID: 1868038758}
+  secondsToHastenGame: 1
+  addedHaste: 0.016666668
   scoreText: {fileID: 1468829362}
 --- !u!114 &1295866683
 MonoBehaviour:
@@ -1789,7 +1793,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isRight: 0
   ball: {fileID: 0}
-  speed: 6
+  ratedSpeed: 4
+  secondsToSlowPaddle: 1
+  removedSpeed: 0.016666668
 --- !u!114 &1338683863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2317,13 +2323,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1868038756}
-  m_LocalRotation: {x: 0, y: 0, z: -0.008726465, w: 0.999962}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 747450263}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1868038758
 BoxCollider2D:
   m_ObjectHideFlags: 0

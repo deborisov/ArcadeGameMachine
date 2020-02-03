@@ -58,6 +58,7 @@ public class FlappyBirdGameManager : MonoBehaviour
         OnGameStarted();
         score = 0;
         gameOver = false;
+        Time.timeScale = 1f;
     }
 
     void OnPlayerDied()
