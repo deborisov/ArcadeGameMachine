@@ -42,7 +42,7 @@ public class Joystick : MonoBehaviour
             startPoint = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
             innerCircle.position = startPoint;
             outerCircle.position = startPoint;
-            if (PlayerPrefs.GetInt("Joystick") == 1)
+            if (PlayerPrefs.GetInt("Joystick", 1) == 1)
             {
                 innerCircle.GetComponent<SpriteRenderer>().enabled = true;
                 outerCircle.GetComponent<SpriteRenderer>().enabled = true;
@@ -66,7 +66,7 @@ public class Joystick : MonoBehaviour
         {
             Vector2 offset = endPoint - startPoint;
             Vector2 direction = Vector2.ClampMagnitude(offset, 1.0f);
-            if (PlayerPrefs.GetInt("Joystick") == 1)
+            if (PlayerPrefs.GetInt("Joystick") == 1 || !PlayerPrefs.HasKey("Joystick"))
             {
                 innerCircle.position = new Vector2(startPoint.x + direction.x, startPoint.y + direction.y);
             }
