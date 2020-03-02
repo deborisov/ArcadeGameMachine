@@ -56,6 +56,11 @@ public class TapController : MonoBehaviour
         if (collision.gameObject.tag == "ScoreZone")
         {
             OnPlayerScored();
+            if (game.Won)
+            {
+                rigidbody.simulated = false;
+                OnPlayerDied();
+            }
         }
     }
 

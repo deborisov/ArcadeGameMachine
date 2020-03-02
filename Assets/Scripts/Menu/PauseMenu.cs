@@ -10,10 +10,16 @@ public class PauseMenu : MonoBehaviour
     public GameObject pauseBtn;
     public delegate void Paused();
     public static event Paused OnPause;
+    public static PauseMenu instance;
 
     private void Start()
     {
         GameIsOnPause = false;
+    }
+
+    private void Awake()
+    {
+        instance = this;
     }
     void Update()
     {
@@ -32,6 +38,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Resume()
     {
+        Joystick.IsAwake = true;
         pauseUI.SetActive(false);
         Time.timeScale = 1f;
         GameIsOnPause = false;
@@ -43,7 +50,8 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
-        OnPause();
+        OnPause?.Invoke();
+        Joystick.IsAwake = false;
         pauseUI.SetActive(true);
         Time.timeScale = 0f;
         GameIsOnPause = true;

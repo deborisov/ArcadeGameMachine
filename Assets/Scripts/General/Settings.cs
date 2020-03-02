@@ -34,5 +34,6 @@ public class Settings : MonoBehaviour
     public void ChangeDifficulty(int newValue)
     {
         PlayerPrefs.SetInt("Difficulty", newValue);
+        Debug.Log(PlayerPrefs.GetInt("Difficulty"));
     }
 }

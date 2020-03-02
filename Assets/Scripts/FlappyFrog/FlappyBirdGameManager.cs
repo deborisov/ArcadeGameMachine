@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class FlappyBirdGameManager : MonoBehaviour
 {
@@ -12,11 +13,20 @@ public class FlappyBirdGameManager : MonoBehaviour
 
     int score = 0;
     bool gameOver = true;
+    bool won = false;
+    public bool Won { get { return won; } private set { won = value; } }
 
     public bool GameOver { get { return gameOver; } }
     public static FlappyBirdGameManager Instance;
     public GameObject countdownPage;
     public GameObject gameOverPage;
+
+    public enum ScoreToDif
+    {
+        Easy = 3,
+        Medium = 6,
+        Hard = 9
+    }
 
     enum PageState
     {
@@ -29,7 +39,7 @@ public class FlappyBirdGameManager : MonoBehaviour
 
     void Start()
     {
-        scoreText.text = "0";
+        SetScoreText();
         SetPageState(PageState.CountDown);
     }
 
@@ -64,13 +74,37 @@ public class FlappyBirdGameManager : MonoBehaviour
     void OnPlayerDied()
     {
         gameOver = true;
+        GameObject gameOverText = gameOverPage.transform.Find("GameOverText").gameObject;
+        GameObject menuButton = gameOverPage.transform.Find("MenuButton").gameObject;
+        GameObject restartButton = gameOverPage.transform.Find("RestartButton").gameObject;
+        if (won)
+        {
+            gameOverText.GetComponent<TextMeshProUGUI>().text = "Stage Clear!";
+            menuButton.SetActive(false);
+            restartButton.GetComponentInChildren<TextMeshProUGUI>().text = "Next stage";
+            PlayerPrefs.SetInt("Stage", PlayerPrefs.GetInt("Stage", 0));
+            Button b = restartButton.GetComponent<Button>();
+            b.onClick.RemoveAllListeners();
+            b.onClick.AddListener(PauseMenu.instance.GoToMenu);
+
+        }
+        else
+        {
+            gameOverText.GetComponent<TextMeshProUGUI>().text = "You died!";
+            menuButton.SetActive(true);
+            restartButton.SetActive(true);
+        }
         SetPageState(PageState.GameOver);
     }
 
     void OnPlayerScored()
     {
         score++;
-        scoreText.text = score.ToString();
+        SetScoreText();
+        if (PlayerPrefs.GetInt("Tower", 0) == 1 && score >= GetScoreByDifficulty())
+        {
+            won = true;
+        }
     }
 
     void SetPageState(PageState state)
@@ -95,11 +129,28 @@ public class FlappyBirdGameManager : MonoBehaviour
     public void ConfirmGameOver()
     {
         OnGameOverConfirmed();
-        scoreText.text = "0";
+        SetScoreText();
     }
 
     public void Restart()
     {
         SceneManager.LoadScene("FlappyFrog");
+    }
+
+    public int GetScoreByDifficulty()
+    {
+        return (PlayerPrefs.GetInt("Difficulty", 1) + 1);
+    }
+
+    public void SetScoreText()
+    {
+        if (PlayerPrefs.GetInt("Tower", 0) == 0)
+        {
+            scoreText.text = score.ToString();
+        }
+        else
+        {
+            scoreText.text = "0/" + GetScoreByDifficulty();
+        }
     }
 }
