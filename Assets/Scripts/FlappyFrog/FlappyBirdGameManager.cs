@@ -77,12 +77,12 @@ public class FlappyBirdGameManager : MonoBehaviour
         GameObject gameOverText = gameOverPage.transform.Find("GameOverText").gameObject;
         GameObject menuButton = gameOverPage.transform.Find("MenuButton").gameObject;
         GameObject restartButton = gameOverPage.transform.Find("RestartButton").gameObject;
-        if (won)
+        if (Won)
         {
             gameOverText.GetComponent<TextMeshProUGUI>().text = "Stage Clear!";
             menuButton.SetActive(false);
             restartButton.GetComponentInChildren<TextMeshProUGUI>().text = "Next stage";
-            PlayerPrefs.SetInt("Stage", PlayerPrefs.GetInt("Stage", 0));
+            PlayerPrefs.SetInt("Stage", PlayerPrefs.GetInt("Stage", 0)); //?
             Button b = restartButton.GetComponent<Button>();
             b.onClick.RemoveAllListeners();
             b.onClick.AddListener(PauseMenu.instance.GoToMenu);
@@ -90,9 +90,17 @@ public class FlappyBirdGameManager : MonoBehaviour
         }
         else
         {
+            PlayerPrefs.SetInt("StageCleared", 0);
             gameOverText.GetComponent<TextMeshProUGUI>().text = "You died!";
+            if (PlayerPrefs.GetInt("Tower", 0) == 0)
+            {
+                restartButton.SetActive(true);
+            }
+            else
+            {
+                restartButton.SetActive(false);
+            }
             menuButton.SetActive(true);
-            restartButton.SetActive(true);
         }
         SetPageState(PageState.GameOver);
     }
@@ -103,7 +111,8 @@ public class FlappyBirdGameManager : MonoBehaviour
         SetScoreText();
         if (PlayerPrefs.GetInt("Tower", 0) == 1 && score >= GetScoreByDifficulty())
         {
-            won = true;
+            Won = true;
+            PlayerPrefs.SetInt("StageCleared", 1);
         }
     }
 
@@ -139,7 +148,7 @@ public class FlappyBirdGameManager : MonoBehaviour
 
     public int GetScoreByDifficulty()
     {
-        return (PlayerPrefs.GetInt("Difficulty", 1) + 1);
+        return (PlayerPrefs.GetInt("Difficulty", 1) + 1)/**3*/;
     }
 
     public void SetScoreText()

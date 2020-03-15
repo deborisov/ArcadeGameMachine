@@ -7,6 +7,10 @@ using UnityEngine.SceneManagement;
 public class SaveTower
 {
     public List<TowerModeScript.Games> stages;
+    public SaveTower (List<TowerModeScript.Games> stages)
+    {
+        this.stages = stages;
+    }
 }
 
 public class TowerModeScript : MonoBehaviour
@@ -38,62 +42,32 @@ public class TowerModeScript : MonoBehaviour
         {
             PlayButton.SetActive(false);
         }
-        if (GetCurrentStages() != null)
+        List<Games> curStages = GetCurrentStages();
+        if (curStages != null)
         {
-            DisplayTower(GetCurrentStages());
+            DisplayTower(curStages);
         }
     }
     public void Reroll()
     {
+        //Sure to reroll?
         DisposeTower();
-        float objectHeight = TowerPrefab.GetComponent<SpriteRenderer>().bounds.size.y;
-        Vector2 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
+        List<Games> proStages = new List<Games>();
         for (int i = 0; i < GetNumberOfStages(); ++i)
         {
-            GameObject towerStage = Instantiate(TowerPrefab) as GameObject;
-            Transform t = towerStage.transform;
-            t.SetParent(transform);
-            t.transform.position = new Vector3(-screenBounds.x/2, -screenBounds.y + i*objectHeight + objectHeight / 2, 0);
-            tower.Add(towerStage);
-
             int curStage = Random.Range(0, possibleIcons.Count);
-            stages.Add((Games)curStage);
-            GameObject stage;
-            Transform tr;
-            switch (curStage)
+            while (i != 0 && (int)proStages[i - 1] == curStage)
             {
-                case 0:
-                    stage = Instantiate(ArcanoidIcon) as GameObject;
-                    tr = stage.transform;
-                    tr.SetParent(t);
-                    tr.transform.position = new Vector3(-screenBounds.x / 2, -screenBounds.y + i * objectHeight + objectHeight / 2, 0);
-                    icons.Add(stage);
-                    break;
-                case 1:
-                    stage = Instantiate(PepeIcon) as GameObject;
-                    tr = stage.transform;
-                    tr.SetParent(t);
-                    tr.transform.position = new Vector3(-screenBounds.x / 2, -screenBounds.y + i * objectHeight + objectHeight / 2, 0);
-                    icons.Add(stage);
-                    break;
-                case 2:
-                    stage = Instantiate(PongIcon) as GameObject;
-                    tr = stage.transform;
-                    tr.SetParent(t);
-                    tr.transform.position = new Vector3(-screenBounds.x / 2, -screenBounds.y + i * objectHeight + objectHeight / 2, 0);
-                    icons.Add(stage);
-                    break;
+                curStage = Random.Range(0, possibleIcons.Count);
             }
+            proStages.Add((Games)curStage);
         }
-        stageText.text = $"Stage 1/{icons.Count}";
-        SaveTowerState();
-        PlayButton.SetActive(true);
+        DisplayTower(proStages);
     }
 
     public void SaveTowerState()
     {
-        SaveTower data = new SaveTower();
-        data.stages = stages;
+        SaveTower data = new SaveTower(stages);
         string value = JsonUtility.ToJson(data);
         PlayerPrefs.SetString("TowerStages", value);
     }
@@ -104,6 +78,7 @@ public class TowerModeScript : MonoBehaviour
         for (int i = 0; i < tower.Count; ++i)
         {
             Destroy(tower[i]);
+            Destroy(icons[i]);
         }
         tower = new List<GameObject>();
         icons = new List<GameObject>();
@@ -124,6 +99,7 @@ public class TowerModeScript : MonoBehaviour
     public void Play()
     {
         if (stages.Count == 0) return;
+        SaveTowerState();
         PlayerPrefs.SetInt("Tower", 1);
         if (stages[0] == Games.Arkanoid)
         {
@@ -162,6 +138,7 @@ public class TowerModeScript : MonoBehaviour
         this.stages = stages;
         stageText.text = $"Stage 1/{icons.Count}";
         PlayButton.SetActive(true);
+        SaveTowerState();
     }
 
     public GameObject BuildBrick(int i, GameObject Prefab)
@@ -182,8 +159,25 @@ public class TowerModeScript : MonoBehaviour
             return null;
         }
         string jsonData = PlayerPrefs.GetString("TowerStages");
-        Debug.Log(jsonData);
         SaveTower st = JsonUtility.FromJson<SaveTower>(jsonData);
+        if (st.stages.Count == 0)
+        {
+            return null;
+        }
+        if (PlayerPrefs.GetInt("StageCleared", 0) == 1)
+        {
+            st.stages.RemoveAt(0);
+            PlayerPrefs.SetInt("StageCleared", 0);
+            //Если длина 0 - победа
+        }
+        else
+        {
+            Debug.Log("Not cleared");
+            DisposeTower();
+            PlayButton.SetActive(false);
+            return null;
+            //Сообщение о поражении
+        }
         return st.stages;
     }
 }
