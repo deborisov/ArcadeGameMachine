@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Delaunay;
 
 public class SaveTower
 {
     public List<TowerModeScript.Games> stages;
-    public SaveTower (List<TowerModeScript.Games> stages)
+    public SaveTower(List<TowerModeScript.Games> stages)
     {
         this.stages = stages;
     }
@@ -17,6 +18,8 @@ public class TowerModeScript : MonoBehaviour
 {
     public GameObject TowerPrefab;
     public GameObject PlayButton;
+    public GameObject Bottom;
+    //public GameObject Test;
 
     public GameObject ArcanoidIcon;
     public GameObject PepeIcon;
@@ -27,7 +30,8 @@ public class TowerModeScript : MonoBehaviour
     List<Games> stages = new List<Games>();
     public TextMeshProUGUI stageText;
 
-    public enum Games{
+    public enum Games
+    {
         Arkanoid,
         FlappyFrog,
         Pong
@@ -35,6 +39,7 @@ public class TowerModeScript : MonoBehaviour
 
     public void Awake()
     {
+        SetBottom();
         possibleIcons.Add(ArcanoidIcon);
         possibleIcons.Add(PepeIcon);
         possibleIcons.Add(PongIcon);
@@ -48,6 +53,19 @@ public class TowerModeScript : MonoBehaviour
             DisplayTower(curStages);
         }
     }
+
+    void SetBottom()
+    {
+        var boxCollider = Bottom.GetComponent<BoxCollider2D>();
+        Vector2 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
+        //Bottom.transform.position = new Vector2(0, -screenBounds.y - 1f);
+        //Bottom.transform.forward = new Vector2(2 * screenBounds.x + 1.5f, 1);
+        boxCollider.size = new Vector2(2 * screenBounds.x + 1.5f, 1);
+        Debug.Log(screenBounds.y);
+        boxCollider.offset = new Vector2(0, -screenBounds.y -0.5f);
+        boxCollider.isTrigger = false;
+    }
+
     public void Reroll()
     {
         //Sure to reroll?
@@ -120,7 +138,7 @@ public class TowerModeScript : MonoBehaviour
         PlayerPrefs.SetInt("Stage", 0);
     }
 
-    public void DisplayTower(List <Games> stages)
+    public void DisplayTower(List<Games> stages)
     {
         for (int i = 0; i < stages.Count; ++i)
         {
@@ -149,6 +167,18 @@ public class TowerModeScript : MonoBehaviour
         Transform t = towerStage.transform;
         t.SetParent(transform);
         t.transform.position = new Vector3(-screenBounds.x / 2, -screenBounds.y + i * objectHeight + objectHeight / 2, 0);
+        if (Prefab == TowerPrefab)
+        {
+            towerStage.AddComponent<BoxCollider2D>();
+            towerStage.GetComponent<BoxCollider2D>().isTrigger = false;
+            towerStage.AddComponent<Explodable>();
+            var e = towerStage.GetComponent<Explodable>();
+            e.extraPoints = 20;
+            e.shatterType = Explodable.ShatterType.Voronoi;
+            e.allowRuntimeFragmentation = true;
+            //e.explode();
+            towerStage.AddComponent<ExplodeOnClick>();
+        }
         return towerStage;
     }
 
