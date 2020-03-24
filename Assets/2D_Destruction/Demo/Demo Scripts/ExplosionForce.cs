@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 
 public class ExplosionForce : MonoBehaviour {
-	public float force = 50;
-	public float radius = 5;
+	public float force = 100;
+	public float radius = 10;
 	public float upliftModifer = 5;
 	
     /// <summary>
@@ -48,7 +48,7 @@ public class ExplosionForce : MonoBehaviour {
         Vector3 baseForce = dir.normalized * explosionForce * wearoff;
         baseForce.z = 0;
 		body.AddForce(baseForce);
-
+        Debug.Log(explosionForce + " " +  explosionRadius + " " + upliftModifer);
         if (upliftModifer != 0)
         {
             float upliftWearoff = 1 - upliftModifier / explosionRadius;

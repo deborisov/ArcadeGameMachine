@@ -52,6 +52,7 @@ public class TowerModeScript : MonoBehaviour
         {
             DisplayTower(curStages);
         }
+        StartCoroutine(CheckPlayerWon());
     }
 
     void SetBottom()
@@ -61,8 +62,7 @@ public class TowerModeScript : MonoBehaviour
         //Bottom.transform.position = new Vector2(0, -screenBounds.y - 1f);
         //Bottom.transform.forward = new Vector2(2 * screenBounds.x + 1.5f, 1);
         boxCollider.size = new Vector2(2 * screenBounds.x + 1.5f, 1);
-        Debug.Log(screenBounds.y);
-        boxCollider.offset = new Vector2(0, -screenBounds.y -0.5f);
+        boxCollider.offset = new Vector2(0, -screenBounds.y - 0.5f);
         boxCollider.isTrigger = false;
     }
 
@@ -102,6 +102,7 @@ public class TowerModeScript : MonoBehaviour
         icons = new List<GameObject>();
         stages = new List<Games>();
     }
+
 
     int GetNumberOfStages()
     {
@@ -153,10 +154,53 @@ public class TowerModeScript : MonoBehaviour
                     icons.Add(BuildBrick(i, PongIcon)); break;
             }
         }
+        //ExplodeBrick(tower[0], icons[0]);
         this.stages = stages;
         stageText.text = $"Stage 1/{icons.Count}";
+        //check win
+        //CheckPlayerWon();
         PlayButton.SetActive(true);
         SaveTowerState();
+    }
+
+
+    private IEnumerator CheckPlayerWon()
+    {
+        yield return new WaitForSeconds(1);
+        Debug.Log(PlayerPrefs.GetInt("StageCleared", -1));
+        if (PlayerPrefs.GetInt("StageCleared", -1) == 1)
+        {
+            PlayerPrefs.SetInt("StageCleared", -1);
+            stages.RemoveAt(0);
+            ExplodeBrick(tower[0], icons[0]);
+            tower.RemoveAt(0);
+            icons.RemoveAt(0);
+            PlayerPrefs.SetInt("StageCleared", -1);
+        }
+        else if (PlayerPrefs.GetInt("StageCleared", -1) == 0)
+        {
+            PlayerPrefs.SetInt("StageCleared", -1);
+            DisposeTower();
+            PlayButton.SetActive(false);
+        }
+        yield return new WaitForSeconds(1);
+        float objectHeight = TowerPrefab.GetComponent<SpriteRenderer>().bounds.size.y;
+        Vector2 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
+        int i = 0;
+        foreach (var t in tower)
+        {
+            var currentTarget = new Vector3(-screenBounds.x / 2, -screenBounds.y + i * objectHeight + objectHeight / 2, 0);
+            Vector3 position = Vector3.MoveTowards(t.GetComponent<Rigidbody2D>().position, currentTarget, 10 * Time.fixedDeltaTime);
+            t.GetComponent<Rigidbody2D>().MovePosition(position);
+            ++i;
+            //t.GetComponent<Rigidbody2D>().simulated = true;
+            //Передвинуть блоки!!!
+        }
+        foreach (var ic in icons)
+        {
+            ic.GetComponent<Rigidbody2D>().simulated = true;
+            ic.GetComponent<BoxCollider2D>().isTrigger = true;
+        }
     }
 
     public GameObject BuildBrick(int i, GameObject Prefab)
@@ -167,19 +211,21 @@ public class TowerModeScript : MonoBehaviour
         Transform t = towerStage.transform;
         t.SetParent(transform);
         t.transform.position = new Vector3(-screenBounds.x / 2, -screenBounds.y + i * objectHeight + objectHeight / 2, 0);
-        if (Prefab == TowerPrefab)
-        {
-            towerStage.AddComponent<BoxCollider2D>();
-            towerStage.GetComponent<BoxCollider2D>().isTrigger = false;
-            towerStage.AddComponent<Explodable>();
-            var e = towerStage.GetComponent<Explodable>();
-            e.extraPoints = 20;
-            e.shatterType = Explodable.ShatterType.Voronoi;
-            e.allowRuntimeFragmentation = true;
-            //e.explode();
-            towerStage.AddComponent<ExplodeOnClick>();
-        }
+        AddExplosionComponents(towerStage);
         return towerStage;
+    }
+
+    private void AddExplosionComponents(GameObject towerStage)
+    {
+        towerStage.AddComponent<Explodable>();
+        var e = towerStage.GetComponent<Explodable>();
+        e.extraPoints = 20;
+        e.shatterType = Explodable.ShatterType.Voronoi;
+        e.allowRuntimeFragmentation = true;
+        towerStage.GetComponent<Rigidbody2D>().simulated = false;
+        towerStage.AddComponent<BoxCollider2D>();
+        towerStage.GetComponent<BoxCollider2D>().isTrigger = false;
+        towerStage.AddComponent<ExplodeOnClick>();
     }
 
     private List<Games> GetCurrentStages()
@@ -194,20 +240,19 @@ public class TowerModeScript : MonoBehaviour
         {
             return null;
         }
-        if (PlayerPrefs.GetInt("StageCleared", 0) == 1)
-        {
-            st.stages.RemoveAt(0);
-            PlayerPrefs.SetInt("StageCleared", 0);
-            //Если длина 0 - победа
-        }
-        else
-        {
-            Debug.Log("Not cleared");
-            DisposeTower();
-            PlayButton.SetActive(false);
-            return null;
-            //Сообщение о поражении
-        }
+        Debug.Log(jsonData);
         return st.stages;
+    }
+
+    private void ExplodeBrick(GameObject brick, GameObject icon)
+    {
+        brick.GetComponent<Rigidbody2D>().simulated = true;
+        brick.GetComponent<Explodable>().explode();
+        ExplosionForce ef = GameObject.FindObjectOfType<ExplosionForce>();
+        ef.doExplosion(brick.transform.position);
+        icon.GetComponent<Rigidbody2D>().simulated = true;
+        icon.GetComponent<Explodable>().explode();
+        ef = GameObject.FindObjectOfType<ExplosionForce>();
+        ef.doExplosion(brick.transform.position);
     }
 }
