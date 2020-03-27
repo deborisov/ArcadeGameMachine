@@ -166,7 +166,7 @@ public class TowerModeScript : MonoBehaviour
 
     private IEnumerator CheckPlayerWon()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.7f);
         Debug.Log(PlayerPrefs.GetInt("StageCleared", -1));
         if (PlayerPrefs.GetInt("StageCleared", -1) == 1)
         {
@@ -183,23 +183,16 @@ public class TowerModeScript : MonoBehaviour
             DisposeTower();
             PlayButton.SetActive(false);
         }
-        yield return new WaitForSeconds(1);
+        //yield return new WaitForSeconds(1);
         float objectHeight = TowerPrefab.GetComponent<SpriteRenderer>().bounds.size.y;
         Vector2 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
-        int i = 0;
-        foreach (var t in tower)
+        for (int i = 0; i < tower.Count; ++i)
         {
+            var brick = tower[i];
+            var icon = icons[i];
             var currentTarget = new Vector3(-screenBounds.x / 2, -screenBounds.y + i * objectHeight + objectHeight / 2, 0);
-            Vector3 position = Vector3.MoveTowards(t.GetComponent<Rigidbody2D>().position, currentTarget, 10 * Time.fixedDeltaTime);
-            t.GetComponent<Rigidbody2D>().MovePosition(position);
-            ++i;
-            //t.GetComponent<Rigidbody2D>().simulated = true;
-            //Передвинуть блоки!!!
-        }
-        foreach (var ic in icons)
-        {
-            ic.GetComponent<Rigidbody2D>().simulated = true;
-            ic.GetComponent<BoxCollider2D>().isTrigger = true;
+            brick.GetComponent<BrickAcceleration>().StartMove(currentTarget);
+            icon.GetComponent<BrickAcceleration>().StartMove(currentTarget);
         }
     }
 
@@ -226,6 +219,7 @@ public class TowerModeScript : MonoBehaviour
         towerStage.AddComponent<BoxCollider2D>();
         towerStage.GetComponent<BoxCollider2D>().isTrigger = false;
         towerStage.AddComponent<ExplodeOnClick>();
+        towerStage.AddComponent<BrickAcceleration>();
     }
 
     private List<Games> GetCurrentStages()
