@@ -13,11 +13,12 @@ public class twoDPongGameManager : MonoBehaviour
     public static twoDPongGameManager Instance;
     int score = 0;
     bool gameOver = true;
+    bool won = false;
     public BoxCollider2D leftEdge, rightEdge, topEdge, bottomEdge;
     private float currentTime = 0;
     public float secondsToHastenGame = 1, addedHaste = 1f / 60;
     public bool GameOver { get { return gameOver; } }
-
+    private GameOverLogic gameOverLogic;
     enum PageState
     {
         None,
@@ -29,7 +30,7 @@ public class twoDPongGameManager : MonoBehaviour
 
     void Start()
     {
-        scoreText.text = "Score: 0";
+        scoreText.text = "Score 0/" + GetScoreByDifficulty();
         Vector2 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
         leftEdge.size = rightEdge.size = new Vector2(1, 2 * screenBounds.y + 1.5f);
         topEdge.size = bottomEdge.size = new Vector2(2 * screenBounds.x + 1.5f, 1);
@@ -74,7 +75,16 @@ public class twoDPongGameManager : MonoBehaviour
     private void IncrementScoreAndSetStart()
     {
         ++score;
-        scoreText.text = "Score " + score;
+        scoreText.text = "Score " + score+"/"+GetScoreByDifficulty(); 
+        if (score == GetScoreByDifficulty())
+        {
+            won = true;
+            if (PlayerPrefs.GetInt("Tower", 0 ) == 1)
+            {
+                PlayerPrefs.SetInt("StageCleared", 1);
+            }
+            OnPlayerDied();
+        }
         SetPageState(PageState.Start);
     }
 
@@ -83,6 +93,8 @@ public class twoDPongGameManager : MonoBehaviour
         gameOver = true;
         Joystick.IsAwake = false;
         SetPageState(PageState.GameOver);
+        gameOverLogic = new GameOverLogic(GameOverPage);
+        gameOverLogic.DrawPage(won);
     }
 
     void OnTapHappened()
@@ -120,5 +132,10 @@ public class twoDPongGameManager : MonoBehaviour
     {
         currentTime = 0;
         Time.timeScale = 1;
+    }
+
+    public int GetScoreByDifficulty()
+    {
+        return (PlayerPrefs.GetInt("Difficulty", 1) + 1);
     }
 }

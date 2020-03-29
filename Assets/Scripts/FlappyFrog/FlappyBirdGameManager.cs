@@ -20,6 +20,7 @@ public class FlappyBirdGameManager : MonoBehaviour
     public static FlappyBirdGameManager Instance;
     public GameObject countdownPage;
     public GameObject gameOverPage;
+    private GameOverLogic gameOverLogic;
 
     public enum ScoreToDif
     {
@@ -74,34 +75,8 @@ public class FlappyBirdGameManager : MonoBehaviour
     void OnPlayerDied()
     {
         gameOver = true;
-        GameObject gameOverText = gameOverPage.transform.Find("GameOverText").gameObject;
-        GameObject menuButton = gameOverPage.transform.Find("MenuButton").gameObject;
-        GameObject restartButton = gameOverPage.transform.Find("RestartButton").gameObject;
-        if (Won)
-        {
-            gameOverText.GetComponent<TextMeshProUGUI>().text = "Stage Clear!";
-            menuButton.SetActive(false);
-            restartButton.GetComponentInChildren<TextMeshProUGUI>().text = "Next stage";
-            PlayerPrefs.SetInt("Stage", PlayerPrefs.GetInt("Stage", 0)); //?
-            Button b = restartButton.GetComponent<Button>();
-            b.onClick.RemoveAllListeners();
-            b.onClick.AddListener(PauseMenu.instance.GoToMenu);
-
-        }
-        else
-        {
-            PlayerPrefs.SetInt("StageCleared", 0);
-            gameOverText.GetComponent<TextMeshProUGUI>().text = "You died!";
-            if (PlayerPrefs.GetInt("Tower", 0) == 0)
-            {
-                restartButton.SetActive(true);
-            }
-            else
-            {
-                restartButton.SetActive(false);
-            }
-            menuButton.SetActive(true);
-        }
+        gameOverLogic = new GameOverLogic(gameOverPage);
+        gameOverLogic.DrawPage(Won);
         SetPageState(PageState.GameOver);
     }
 
