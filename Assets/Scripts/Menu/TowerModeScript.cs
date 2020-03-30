@@ -19,8 +19,6 @@ public class TowerModeScript : MonoBehaviour
     public GameObject TowerPrefab;
     public GameObject PlayButton;
     public GameObject Bottom;
-    //public GameObject Test;
-
     public GameObject ArcanoidIcon;
     public GameObject PepeIcon;
     public GameObject PongIcon;
@@ -53,6 +51,7 @@ public class TowerModeScript : MonoBehaviour
             DisplayTower(curStages);
         }
         StartCoroutine(CheckPlayerWon());
+
     }
 
     void SetBottom()
@@ -101,6 +100,7 @@ public class TowerModeScript : MonoBehaviour
         tower = new List<GameObject>();
         icons = new List<GameObject>();
         stages = new List<Games>();
+        PlayButton.SetActive(false);
     }
 
 
@@ -136,6 +136,7 @@ public class TowerModeScript : MonoBehaviour
 
     public void NullStage()
     {
+        stageText.text = "Stage 1/X";
         PlayerPrefs.SetInt("Stage", 0);
     }
 
@@ -154,11 +155,8 @@ public class TowerModeScript : MonoBehaviour
                     icons.Add(BuildBrick(i, PongIcon)); break;
             }
         }
-        //ExplodeBrick(tower[0], icons[0]);
         this.stages = stages;
-        stageText.text = $"Stage 1/{icons.Count}";
-        //check win
-        //CheckPlayerWon();
+        stageText.text = $"Stage {GetNumberOfStages() - icons.Count + 1}/{GetNumberOfStages()}";
         PlayButton.SetActive(true);
         SaveTowerState();
     }
@@ -166,33 +164,39 @@ public class TowerModeScript : MonoBehaviour
 
     private IEnumerator CheckPlayerWon()
     {
-        yield return new WaitForSeconds(0.7f);
-        Debug.Log(PlayerPrefs.GetInt("StageCleared", -1));
-        if (PlayerPrefs.GetInt("StageCleared", -1) == 1)
+        
+        if (PlayerPrefs.GetInt("Tower", 0) == 1 && PlayerPrefs.GetInt("StageCleared", -1) == 1)
         {
+            yield return new WaitForSeconds(0.7f);
             PlayerPrefs.SetInt("StageCleared", -1);
             stages.RemoveAt(0);
             ExplodeBrick(tower[0], icons[0]);
             tower.RemoveAt(0);
             icons.RemoveAt(0);
             PlayerPrefs.SetInt("StageCleared", -1);
+            float objectHeight = TowerPrefab.GetComponent<SpriteRenderer>().bounds.size.y;
+            Vector2 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
+            for (int i = 0; i < tower.Count; ++i)
+            {
+                var brick = tower[i];
+                var icon = icons[i];
+                var currentTarget = new Vector3(-screenBounds.x / 2, -screenBounds.y + i * objectHeight + objectHeight / 2, 0);
+                brick.GetComponent<BrickAcceleration>().StartMove(currentTarget);
+                icon.GetComponent<BrickAcceleration>().StartMove(currentTarget);
+            }
+            stageText.text = $"Stage {GetNumberOfStages() - icons.Count + 1}/{GetNumberOfStages()}";
+            if (icons.Count == 0)
+            {
+                stageText.text = "You passed the tower!";
+                SaveTowerState();
+                PlayButton.SetActive(false);
+            }
         }
-        else if (PlayerPrefs.GetInt("StageCleared", -1) == 0)
+        else if (PlayerPrefs.GetInt("Tower", 0) == 1 &&  PlayerPrefs.GetInt("StageCleared", -1) == 0)
         {
             PlayerPrefs.SetInt("StageCleared", -1);
             DisposeTower();
             PlayButton.SetActive(false);
-        }
-        //yield return new WaitForSeconds(1);
-        float objectHeight = TowerPrefab.GetComponent<SpriteRenderer>().bounds.size.y;
-        Vector2 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
-        for (int i = 0; i < tower.Count; ++i)
-        {
-            var brick = tower[i];
-            var icon = icons[i];
-            var currentTarget = new Vector3(-screenBounds.x / 2, -screenBounds.y + i * objectHeight + objectHeight / 2, 0);
-            brick.GetComponent<BrickAcceleration>().StartMove(currentTarget);
-            icon.GetComponent<BrickAcceleration>().StartMove(currentTarget);
         }
     }
 
@@ -224,8 +228,10 @@ public class TowerModeScript : MonoBehaviour
 
     private List<Games> GetCurrentStages()
     {
+        Debug.Log("LLL");
         if (!PlayerPrefs.HasKey("TowerStages"))
         {
+
             return null;
         }
         string jsonData = PlayerPrefs.GetString("TowerStages");
@@ -234,7 +240,6 @@ public class TowerModeScript : MonoBehaviour
         {
             return null;
         }
-        Debug.Log(jsonData);
         return st.stages;
     }
 

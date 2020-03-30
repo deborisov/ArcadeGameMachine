@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour
         if (numberOfBricks <= 0)
         {
             won = true;
+            PlayerPrefs.SetInt("StageCleared", 1);
             GameOver();
         }
     }
@@ -63,6 +64,7 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        Time.timeScale = 0; 
         gameOver = true;
         gameOverPannel.SetActive(true);
         gameOverLogic = new GameOverLogic(gameOverPannel);

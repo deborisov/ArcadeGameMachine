@@ -11,7 +11,7 @@ public class PaddleScript : MonoBehaviour
     public float ratedSpeed;
     private float currentSpeed;
     private float currentTime = 0;
-    public float secondsToSlowPaddle = 1, removedSpeed = 5f / 240;
+    public float secondsToSlowPaddle = 0.3f, removedSpeed = 15f / 240;
 
     void Start()
     {
@@ -75,14 +75,6 @@ public class PaddleScript : MonoBehaviour
         Vector3 vel = ball.GetComponent<Rigidbody2D>().velocity;
         if (vel.x > 0)
         {
-            /*if (ball.transform.position.y > transform.position.y)
-            {
-                transform.Translate(Vector2.right * Time.deltaTime * currentSpeed);
-            }
-            else
-            {
-                transform.Translate(Vector2.left * Time.deltaTime * currentSpeed);
-            }*/
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, ball.transform.position.y, transform.position.z), currentSpeed * Time.deltaTime);
         }
     }

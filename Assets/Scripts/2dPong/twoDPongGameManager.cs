@@ -30,7 +30,13 @@ public class twoDPongGameManager : MonoBehaviour
 
     void Start()
     {
-        scoreText.text = "Score 0/" + GetScoreByDifficulty();
+        if (PlayerPrefs.GetInt("Tower", 0) == 1){
+            scoreText.text = "Score 0/" + GetScoreByDifficulty();
+        }
+        else
+        {
+            scoreText.text = "Score 0";
+        }
         Vector2 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
         leftEdge.size = rightEdge.size = new Vector2(1, 2 * screenBounds.y + 1.5f);
         topEdge.size = bottomEdge.size = new Vector2(2 * screenBounds.x + 1.5f, 1);
@@ -75,17 +81,27 @@ public class twoDPongGameManager : MonoBehaviour
     private void IncrementScoreAndSetStart()
     {
         ++score;
-        scoreText.text = "Score " + score+"/"+GetScoreByDifficulty(); 
-        if (score == GetScoreByDifficulty())
+        if (PlayerPrefs.GetInt("Tower", 0) == 1)
+        {
+            scoreText.text = "Score " + score + "/" + GetScoreByDifficulty();
+        }
+        else
+        {
+            scoreText.text = "Score " + score;
+        }
+        if (PlayerPrefs.GetInt("Tower", 0) == 1 && score == GetScoreByDifficulty())
         {
             won = true;
-            if (PlayerPrefs.GetInt("Tower", 0 ) == 1)
+            if (PlayerPrefs.GetInt("Tower", 0) == 1)
             {
                 PlayerPrefs.SetInt("StageCleared", 1);
             }
             OnPlayerDied();
         }
-        SetPageState(PageState.Start);
+        else
+        {
+            SetPageState(PageState.Start);
+        }
     }
 
     private void OnPlayerDied()
