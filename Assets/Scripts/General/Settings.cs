@@ -8,6 +8,7 @@ public class Settings : MonoBehaviour
 {
     public Toggle joystickStateToggle;
     public TMP_Dropdown difficulty;
+    public GameObject towerMode;
     enum Difficulty
     {
         Easy,
@@ -33,7 +34,8 @@ public class Settings : MonoBehaviour
 
     public void ChangeDifficulty(int newValue)
     {
+        towerMode.GetComponent<TowerModeScript>().DisposeTower();
         PlayerPrefs.SetInt("Difficulty", newValue);
-        Debug.Log(PlayerPrefs.GetInt("Difficulty"));
+        PlayerPrefs.DeleteKey("TowerStages");
     }
 }

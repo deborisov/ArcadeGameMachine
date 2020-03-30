@@ -20,6 +20,7 @@ public class FlappyBirdGameManager : MonoBehaviour
     public static FlappyBirdGameManager Instance;
     public GameObject countdownPage;
     public GameObject gameOverPage;
+    private GameOverLogic gameOverLogic;
 
     public enum ScoreToDif
     {
@@ -74,26 +75,8 @@ public class FlappyBirdGameManager : MonoBehaviour
     void OnPlayerDied()
     {
         gameOver = true;
-        GameObject gameOverText = gameOverPage.transform.Find("GameOverText").gameObject;
-        GameObject menuButton = gameOverPage.transform.Find("MenuButton").gameObject;
-        GameObject restartButton = gameOverPage.transform.Find("RestartButton").gameObject;
-        if (won)
-        {
-            gameOverText.GetComponent<TextMeshProUGUI>().text = "Stage Clear!";
-            menuButton.SetActive(false);
-            restartButton.GetComponentInChildren<TextMeshProUGUI>().text = "Next stage";
-            PlayerPrefs.SetInt("Stage", PlayerPrefs.GetInt("Stage", 0));
-            Button b = restartButton.GetComponent<Button>();
-            b.onClick.RemoveAllListeners();
-            b.onClick.AddListener(PauseMenu.instance.GoToMenu);
-
-        }
-        else
-        {
-            gameOverText.GetComponent<TextMeshProUGUI>().text = "You died!";
-            menuButton.SetActive(true);
-            restartButton.SetActive(true);
-        }
+        gameOverLogic = new GameOverLogic(gameOverPage);
+        gameOverLogic.DrawPage(Won);
         SetPageState(PageState.GameOver);
     }
 
@@ -103,7 +86,8 @@ public class FlappyBirdGameManager : MonoBehaviour
         SetScoreText();
         if (PlayerPrefs.GetInt("Tower", 0) == 1 && score >= GetScoreByDifficulty())
         {
-            won = true;
+            Won = true;
+            PlayerPrefs.SetInt("StageCleared", 1);
         }
     }
 
@@ -139,7 +123,7 @@ public class FlappyBirdGameManager : MonoBehaviour
 
     public int GetScoreByDifficulty()
     {
-        return (PlayerPrefs.GetInt("Difficulty", 1) + 1);
+        return (PlayerPrefs.GetInt("Difficulty", 1) + 1)/**3*/;
     }
 
     public void SetScoreText()

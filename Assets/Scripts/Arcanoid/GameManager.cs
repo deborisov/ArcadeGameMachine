@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverPannel;
     public int numberOfBricks;
     public BoxCollider2D leftEdge, rightEdge, topEdge, bottomEdge;
+    private bool won = false;
+    private GameOverLogic gameOverLogic;
     // Start is called before the first frame update
     void Start()
     {
@@ -37,6 +39,7 @@ public class GameManager : MonoBehaviour
         if (lives <= 0)
         {
             lives = 0;
+            won = false;
             GameOver();
         }
         liveText.text = "Lives: " + lives;
@@ -47,6 +50,8 @@ public class GameManager : MonoBehaviour
         --numberOfBricks;
         if (numberOfBricks <= 0)
         {
+            won = true;
+            PlayerPrefs.SetInt("StageCleared", 1);
             GameOver();
         }
     }
@@ -59,8 +64,11 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        Time.timeScale = 0; 
         gameOver = true;
         gameOverPannel.SetActive(true);
+        gameOverLogic = new GameOverLogic(gameOverPannel);
+        gameOverLogic.DrawPage(won);
     }
 
     public void PlayAgain()
