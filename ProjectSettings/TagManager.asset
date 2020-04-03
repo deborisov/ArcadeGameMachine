@@ -11,6 +11,7 @@ TagManager:
   - ScoreZone
   - LeftEdge
   - RightEdge
+  - TowerPannel
   layers:
   - Default
   - TransparentFX

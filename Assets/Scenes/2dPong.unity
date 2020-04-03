@@ -1911,8 +1911,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Score '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 0626cbdad1d096a468799ee619ab1ab2, type: 2}
-  m_sharedMaterial: {fileID: 21598429571674424, guid: 0626cbdad1d096a468799ee619ab1ab2,
+  m_fontAsset: {fileID: 11400000, guid: 7dadd3a31e58a48418c310c2995bf80f, type: 2}
+  m_sharedMaterial: {fileID: 21436893266035984, guid: 7dadd3a31e58a48418c310c2995bf80f,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1938,8 +1938,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1955,7 +1955,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0

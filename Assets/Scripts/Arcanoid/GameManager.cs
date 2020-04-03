@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public BoxCollider2D leftEdge, rightEdge, topEdge, bottomEdge;
     private bool won = false;
     private GameOverLogic gameOverLogic;
+    public List<GameObject> levels = new List<GameObject>();
     // Start is called before the first frame update
     void Start()
     {
@@ -30,9 +31,16 @@ public class GameManager : MonoBehaviour
         liveText.text = "Lives: " + lives;
         scoreText.text = "Score: " + score;
         gameOverPannel.SetActive(false);
+        LoadLevel();
         numberOfBricks = GameObject.FindGameObjectsWithTag("Brick").Length;
     }
 
+
+    private void LoadLevel()
+    {
+        int number = Random.Range(0, levels.Count);
+        levels[number].SetActive(true);        
+    }
     public void ChangeLives(int delta)
     {
         lives += delta;

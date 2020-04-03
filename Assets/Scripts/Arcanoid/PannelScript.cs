@@ -7,28 +7,60 @@ public class PannelScript : MonoBehaviour
 {
     public float speed;
     public GameManager gm;
+    public float timeToScale = 0.5f;
+    (bool, bool) scalingSide = (false, false);
+    float targetXScale = 0;
+    public float delta = 0.2f;
+    public float timeForUpgrade = 2f;
+    bool stopCycle = false;
 
-    void Update()
+    public void Awake()
     {
-        /*if (gm.gameOver)
+        switch (PlayerPrefs.GetInt("Difficulty", 1))
         {
-            return;
+            case 0:
+                transform.localScale = new Vector3(0.85f, 0.15f, 1f);
+                break;
+            case 1:
+                transform.localScale = new Vector3(0.7f, 0.15f, 1f);
+                break;
+            case 2:
+                transform.localScale = new Vector3(0.5f, 0.15f, 1f);
+                break;
         }
-        if (Input.touchCount > 0 && Input.GetTouch(0).tapCount <= 1)
-        {
-            Touch touch = Input.GetTouch(0);
-            Vector3 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
-            if (touchPosition.x > 0 )
-            {
-                transform.Translate(Vector2.right * Time.deltaTime * speed);
-            }
-            else
-            {
-                transform.Translate(Vector2.left * Time.deltaTime * speed);
-            }
-        }*/
     }
 
+    public void Update()
+    {
+        if (scalingSide.Item1 || scalingSide.Item2)
+        {
+            timeForUpgrade -= Time.deltaTime;
+            Debug.Log(timeForUpgrade);
+            if (timeForUpgrade <= 0)
+            {
+                Debug.Log("time");
+                timeForUpgrade = 60f;//Random number
+                scalingSide = (scalingSide.Item2, scalingSide.Item1);
+                delta = -delta;
+                targetXScale += delta;
+                stopCycle = true;
+            }
+            if (scalingSide.Item1 && targetXScale <= transform.localScale.x ||
+                scalingSide.Item2 && targetXScale >= transform.localScale.x)
+            {
+                if (stopCycle)
+                {
+                    scalingSide = (false, false);
+                    stopCycle = false;
+                }
+                return;
+            }
+            var temp = transform.localScale;
+            temp.x = transform.localScale.x + delta / timeToScale * Time.deltaTime;
+            Debug.Log(temp.x);
+            transform.localScale = temp;
+        }
+    }
     private void OnEnable()
     {
         Joystick.OnMakeMove += MakeMove;
@@ -49,6 +81,22 @@ public class PannelScript : MonoBehaviour
     {
         if (other.CompareTag("ExtraLife")){
             gm.ChangeLives(1);
+            Destroy(other.gameObject);
+        }
+        if (other.CompareTag("Decrease") && !scalingSide.Item1 && !scalingSide.Item2)
+        {
+            timeForUpgrade = 2f;
+            scalingSide = (false, true);
+            delta = -Mathf.Abs(delta);
+            targetXScale = transform.localScale.x + delta;
+            Destroy(other.gameObject);
+        }
+        if (other.CompareTag("Increase") && !scalingSide.Item1 && !scalingSide.Item2)
+        {
+            timeForUpgrade = 2f;
+            scalingSide = (true, false);
+            delta = Mathf.Abs(delta);
+            targetXScale = transform.localScale.x + delta;
             Destroy(other.gameObject);
         }
     }

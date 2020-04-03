@@ -11,7 +11,9 @@ public class BallScript : MonoBehaviour
     public float speed;
     public Transform explosion;
     public GameManager gm;
-    public Transform powerUp;
+    public Transform extraLife;
+    public Transform increaseUpgrade;
+    public Transform decreaseUpgrade;
 
     void Start()
     {
@@ -60,17 +62,22 @@ public class BallScript : MonoBehaviour
             }
             else
             {
-                int rnd = Random.Range(1, 11);
-                if (rnd < 3)
-                {
-                    Instantiate(powerUp, other.transform.position, other.transform.rotation);
-                }
+                UpgradeLogic(other);
                 gm.ChangeScore(brickScript.pointForBrick);
                 Transform exp = Instantiate(explosion, other.transform.position, other.transform.rotation);
                 Destroy(exp.gameObject, 3);
                 Destroy(other.gameObject);
                 gm.ChangeNumberOfBricks();
             }
+        }
+    }
+
+    private void UpgradeLogic(Collision2D other)
+    {
+        int chanceForUpgrade = Random.Range(1, 11);
+        if (chanceForUpgrade < 10)
+        {
+            Instantiate(decreaseUpgrade, other.transform.position, other.transform.rotation);
         }
     }
 }
