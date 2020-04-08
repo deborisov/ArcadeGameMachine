@@ -35,7 +35,9 @@ public class TapController : MonoBehaviour
         if (game.GameOver) return;
         if (Input.GetMouseButtonDown(0))
         {
-            if (Random.Range(0f, 1f) <= 0.1)
+            var audioManager = FindObjectOfType<AudioManager>();
+            audioManager.Play("Tap");
+            if (Random.Range(0f, 1f) <= 0.2)
             {
                 Time.timeScale += 0.03f;
             }
@@ -51,11 +53,15 @@ public class TapController : MonoBehaviour
         if (collision.gameObject.tag == "DeadZone")
         {
             rigidbody.simulated = false;
+            var audioManager = FindObjectOfType<AudioManager>();
+            audioManager.Play("Die");
             OnPlayerDied();
         }
         if (collision.gameObject.tag == "ScoreZone")
         {
             OnPlayerScored();
+            var audioManager = FindObjectOfType<AudioManager>();
+            audioManager.Play("Score");
             if (game.Won)
             {
                 rigidbody.simulated = false;

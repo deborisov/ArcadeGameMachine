@@ -65,8 +65,6 @@ public class PaddleScript : MonoBehaviour
         {
             currentSpeed -= removedSpeed;
             currentTime -= secondsToSlowPaddle;
-            Debug.Log(currentSpeed);
-            Debug.Log(Time.timeScale);
         }
     }
 

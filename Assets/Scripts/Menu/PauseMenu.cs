@@ -11,6 +11,7 @@ public class PauseMenu : MonoBehaviour
     public delegate void Paused();
     public static event Paused OnPause;
     public static PauseMenu instance;
+    private System.Single timeBeforePause;
 
     private void Start()
     {
@@ -40,7 +41,7 @@ public class PauseMenu : MonoBehaviour
     {
         Joystick.IsAwake = true;
         pauseUI.SetActive(false);
-        Time.timeScale = 1f;
+        Time.timeScale = timeBeforePause;
         GameIsOnPause = false;
         if (pauseBtn != null)
         {
@@ -50,6 +51,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
+        timeBeforePause = Time.timeScale;
         OnPause?.Invoke();
         Joystick.IsAwake = false;
         pauseUI.SetActive(true);
@@ -63,6 +65,11 @@ public class PauseMenu : MonoBehaviour
 
     public void GoToMenu()
     {
+        var audioManager = FindObjectsOfType<AudioManager>();
+        foreach (var manager in audioManager)
+        {
+            Destroy(manager.gameObject);
+        }
         Time.timeScale = 1f;
         SceneManager.LoadScene("Menu");
     }

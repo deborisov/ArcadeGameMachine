@@ -9,10 +9,11 @@ public class StartTap : MonoBehaviour
     public TextMeshProUGUI startText;
     public delegate void TapHappened();
     public static event TapHappened OnTapHappened;
+    public string startMessage;
     private void OnEnable()
     {
         startText = GetComponent<TextMeshProUGUI>();
-        startText.text = "Tap to start";
+        startText.text = startMessage;
     }
 
     private void Update()

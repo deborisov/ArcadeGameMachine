@@ -9,11 +9,11 @@ public class BallScript : MonoBehaviour
     public bool inPlay;
     public Transform pannel;
     public float speed;
-    public Transform explosion;
     public GameManager gm;
     public Transform extraLife;
     public Transform increaseUpgrade;
     public Transform decreaseUpgrade;
+    public AudioSource blup;
 
     void Start()
     {
@@ -59,25 +59,38 @@ public class BallScript : MonoBehaviour
             if (brickScript.hitsToBreak > 1)
             {
                 brickScript.BreakBrick();
+                var audioManager = FindObjectOfType<AudioManager>();
+                audioManager.Play("Hit");
             }
             else
             {
                 UpgradeLogic(other);
                 gm.ChangeScore(brickScript.pointForBrick);
-                Transform exp = Instantiate(explosion, other.transform.position, other.transform.rotation);
-                Destroy(exp.gameObject, 3);
-                Destroy(other.gameObject);
+                brickScript.Explode();
                 gm.ChangeNumberOfBricks();
+                var audioManager = FindObjectOfType<AudioManager>();
+                audioManager.Play("Blup");
             }
+        }
+        else if (!gm.StartPage.activeSelf)
+        {
+            var audioManager = FindObjectOfType<AudioManager>();
+            audioManager.Play("Hit");
         }
     }
 
     private void UpgradeLogic(Collision2D other)
     {
         int chanceForUpgrade = Random.Range(1, 11);
-        if (chanceForUpgrade < 10)
+        if (chanceForUpgrade < 3)
         {
-            Instantiate(decreaseUpgrade, other.transform.position, other.transform.rotation);
+            chanceForUpgrade = Random.Range(1, 4);
+            switch (chanceForUpgrade)
+            {
+                case 1: Instantiate(decreaseUpgrade, other.transform.position, other.transform.rotation); break;
+                case 2: Instantiate(increaseUpgrade, other.transform.position, other.transform.rotation); break;
+                case 3: Instantiate(extraLife, other.transform.position, other.transform.rotation); break;
+            }
         }
     }
 }

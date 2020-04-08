@@ -11,7 +11,7 @@ public class PannelScript : MonoBehaviour
     (bool, bool) scalingSide = (false, false);
     float targetXScale = 0;
     public float delta = 0.2f;
-    public float timeForUpgrade = 2f;
+    public float timeForUpgrade = 15f;
     bool stopCycle = false;
 
     public void Awake()
@@ -19,7 +19,7 @@ public class PannelScript : MonoBehaviour
         switch (PlayerPrefs.GetInt("Difficulty", 1))
         {
             case 0:
-                transform.localScale = new Vector3(0.85f, 0.15f, 1f);
+                transform.localScale = new Vector3(0.78f, 0.15f, 1f);
                 break;
             case 1:
                 transform.localScale = new Vector3(0.7f, 0.15f, 1f);
@@ -35,11 +35,8 @@ public class PannelScript : MonoBehaviour
         if (scalingSide.Item1 || scalingSide.Item2)
         {
             timeForUpgrade -= Time.deltaTime;
-            Debug.Log(timeForUpgrade);
-            if (timeForUpgrade <= 0)
+            if (timeForUpgrade <= 0 && !stopCycle)
             {
-                Debug.Log("time");
-                timeForUpgrade = 60f;//Random number
                 scalingSide = (scalingSide.Item2, scalingSide.Item1);
                 delta = -delta;
                 targetXScale += delta;
@@ -57,7 +54,6 @@ public class PannelScript : MonoBehaviour
             }
             var temp = transform.localScale;
             temp.x = transform.localScale.x + delta / timeToScale * Time.deltaTime;
-            Debug.Log(temp.x);
             transform.localScale = temp;
         }
     }
@@ -83,20 +79,26 @@ public class PannelScript : MonoBehaviour
             gm.ChangeLives(1);
             Destroy(other.gameObject);
         }
-        if (other.CompareTag("Decrease") && !scalingSide.Item1 && !scalingSide.Item2)
+        if (other.CompareTag("Decrease"))
         {
-            timeForUpgrade = 2f;
-            scalingSide = (false, true);
-            delta = -Mathf.Abs(delta);
-            targetXScale = transform.localScale.x + delta;
+            if (!scalingSide.Item1 && !scalingSide.Item2)
+            {
+                timeForUpgrade = 15f;
+                scalingSide = (false, true);
+                delta = -Mathf.Abs(delta);
+                targetXScale = transform.localScale.x + delta;
+            }
             Destroy(other.gameObject);
         }
-        if (other.CompareTag("Increase") && !scalingSide.Item1 && !scalingSide.Item2)
+        if (other.CompareTag("Increase"))
         {
-            timeForUpgrade = 2f;
-            scalingSide = (true, false);
-            delta = Mathf.Abs(delta);
-            targetXScale = transform.localScale.x + delta;
+            if (!scalingSide.Item1 && !scalingSide.Item2)
+            {
+                timeForUpgrade = 15f;
+                scalingSide = (true, false);
+                delta = Mathf.Abs(delta);
+                targetXScale = transform.localScale.x + delta;
+            }
             Destroy(other.gameObject);
         }
     }

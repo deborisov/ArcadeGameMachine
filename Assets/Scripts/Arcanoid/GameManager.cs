@@ -18,8 +18,21 @@ public class GameManager : MonoBehaviour
     private bool won = false;
     private GameOverLogic gameOverLogic;
     public List<GameObject> levels = new List<GameObject>();
+    public GameObject StartPage;
     // Start is called before the first frame update
     void Start()
+    {
+        Time.timeScale = 1f;
+        SetEdges();
+        liveText.text = "Lives: " + lives;
+        scoreText.text = "Score: " + score;
+        gameOverPannel.SetActive(false);
+        LoadLevel();
+        numberOfBricks = GameObject.FindGameObjectsWithTag("Brick").Length;
+        StartPage.SetActive(true);
+    }
+
+    void SetEdges()
     {
         Vector2 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
         leftEdge.size = rightEdge.size = new Vector2(1, 2 * screenBounds.y + 1.5f);
@@ -28,13 +41,22 @@ public class GameManager : MonoBehaviour
         bottomEdge.offset = new Vector2(0, -screenBounds.y - 1f);
         leftEdge.offset = new Vector2(-screenBounds.x - 0.5f, 0);
         rightEdge.offset = new Vector2(screenBounds.x + 0.5f, 0);
-        liveText.text = "Lives: " + lives;
-        scoreText.text = "Score: " + score;
-        gameOverPannel.SetActive(false);
-        LoadLevel();
-        numberOfBricks = GameObject.FindGameObjectsWithTag("Brick").Length;
     }
 
+    void OnTapHappened()
+    {
+        StartPage.SetActive(false);
+    }
+
+    private void OnEnable()
+    {
+        StartTap.OnTapHappened += OnTapHappened;
+    }
+
+    private void OnDisable()
+    {
+        StartTap.OnTapHappened -= OnTapHappened;
+    }
 
     private void LoadLevel()
     {
@@ -81,6 +103,9 @@ public class GameManager : MonoBehaviour
 
     public void PlayAgain()
     {
+        PlayerPrefs.SetInt("WasPrevious", 1);
+        var audioManager = FindObjectOfType<AudioManager>();
+        DontDestroyOnLoad(audioManager.gameObject);
         SceneManager.LoadScene("Arcanoid");
     }
 
