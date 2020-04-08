@@ -19,6 +19,9 @@ public class twoDPongGameManager : MonoBehaviour
     public float secondsToHastenGame = 1, addedHaste = 1f / 60;
     public bool GameOver { get { return gameOver; } }
     private GameOverLogic gameOverLogic;
+    public bool gameStarted = false;
+
+    public List<GameObject> upgrades;
     enum PageState
     {
         None,
@@ -56,6 +59,7 @@ public class twoDPongGameManager : MonoBehaviour
     {
         StartTap.OnTapHappened += OnTapHappened;
         Ball2DScript.OnPlayerScored += IncrementScoreAndSetStart;
+        Ball2DScript.OnPlayerScored += ClearMap;
         Ball2DScript.OnPlayerDied += OnPlayerDied;
         OnGameStarted += ZeroizeTime;
     }
@@ -64,18 +68,39 @@ public class twoDPongGameManager : MonoBehaviour
     {
         StartTap.OnTapHappened -= OnTapHappened;
         Ball2DScript.OnPlayerScored -= IncrementScoreAndSetStart;
+        Ball2DScript.OnPlayerScored -= ClearMap;
         Ball2DScript.OnPlayerDied -= OnPlayerDied;
         OnGameStarted -= ZeroizeTime;
     }
 
     private void Update()
     {
-        currentTime += Time.deltaTime;
-        if (currentTime > secondsToHastenGame)
+        if (gameStarted)
         {
-            Time.timeScale += addedHaste;
-            currentTime -= secondsToHastenGame;
+            if (Random.Range(0, 300) < 1)
+            {
+                int chanceForUpgrade = Random.Range(1, 3);
+                switch (chanceForUpgrade)
+                {
+                    case 1: Instantiate(upgrades[0], GetRandomPosition(), Quaternion.Euler(0, 0, 45)); break;
+                    case 2: Instantiate(upgrades[1], GetRandomPosition(), transform.rotation); break;
+                }
+            }
+            currentTime += Time.deltaTime;
+            if (currentTime > secondsToHastenGame)
+            {
+                Time.timeScale += addedHaste;
+                currentTime -= secondsToHastenGame;
+            }
         }
+    }
+
+    private Vector3 GetRandomPosition()
+    {
+        Vector3 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
+        float x = Random.Range(-screenBounds.x, screenBounds.x) * 0.8f;
+        float y = Random.Range(-screenBounds.y, screenBounds.y) * 0.8f;
+        return new Vector3(x, y, 0);
     }
 
     private void IncrementScoreAndSetStart()
@@ -117,6 +142,7 @@ public class twoDPongGameManager : MonoBehaviour
     {
         SetPageState(PageState.None);
         OnGameStarted();
+        gameStarted = true;
         Joystick.IsAwake = true;
     }
 
@@ -141,7 +167,25 @@ public class twoDPongGameManager : MonoBehaviour
 
     public void Restart()
     {
-        SceneManager.LoadScene("2dPong");
+        ClearMap();
+        gameStarted = false;
+        SetPageState(PageState.Start);
+        scoreText.text = "Score 0";
+        //SceneManager.LoadScene("2dPong");
+    }
+
+    private void ClearMap()
+    {
+        var doubles = GameObject.FindGameObjectsWithTag("Double");
+        foreach (var d in doubles)
+        {
+            Destroy(d);
+        }
+        var speeds = GameObject.FindGameObjectsWithTag("Speed");
+        foreach (var s in speeds)
+        {
+            Destroy(s);
+        }
     }
 
     private void ZeroizeTime()

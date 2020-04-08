@@ -11,6 +11,11 @@ TagManager:
   - ScoreZone
   - LeftEdge
   - RightEdge
+  - TowerPannel
+  - Decrease
+  - Increase
+  - Double
+  - Speed
   layers:
   - Default
   - TransparentFX

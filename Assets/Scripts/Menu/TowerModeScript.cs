@@ -109,9 +109,9 @@ public class TowerModeScript : MonoBehaviour
         switch (PlayerPrefs.GetInt("Difficulty", 1))
         {
             case 0: return 5;
-            case 1: return 10;
-            case 2: return 15;
-            default: return 10;
+            case 1: return 7;
+            case 2: return 9;
+            default: return 7;
         }
     }
 
@@ -120,6 +120,7 @@ public class TowerModeScript : MonoBehaviour
         if (stages.Count == 0) return;
         SaveTowerState();
         PlayerPrefs.SetInt("Tower", 1);
+        PlayerPrefs.SetInt("WasPrevious", 0);
         if (stages[0] == Games.Arkanoid)
         {
             SceneManager.LoadScene("Arcanoid");
@@ -245,6 +246,8 @@ public class TowerModeScript : MonoBehaviour
 
     private void ExplodeBrick(GameObject brick, GameObject icon)
     {
+        var audioManager = FindObjectOfType<AudioManager>();
+        audioManager.Play("Stone");
         brick.GetComponent<Rigidbody2D>().simulated = true;
         brick.GetComponent<Explodable>().explode();
         ExplosionForce ef = GameObject.FindObjectOfType<ExplosionForce>();

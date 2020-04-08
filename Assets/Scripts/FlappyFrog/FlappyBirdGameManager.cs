@@ -22,13 +22,6 @@ public class FlappyBirdGameManager : MonoBehaviour
     public GameObject gameOverPage;
     private GameOverLogic gameOverLogic;
 
-    public enum ScoreToDif
-    {
-        Easy = 3,
-        Medium = 6,
-        Hard = 9
-    }
-
     enum PageState
     {
         None,
@@ -118,12 +111,16 @@ public class FlappyBirdGameManager : MonoBehaviour
 
     public void Restart()
     {
+        Debug.Log("Playim music");
+        PlayerPrefs.SetInt("WasPrevious", 1);
+        var audioManager = FindObjectOfType<AudioManager>();
+        DontDestroyOnLoad(audioManager.gameObject);
         SceneManager.LoadScene("FlappyFrog");
     }
 
     public int GetScoreByDifficulty()
     {
-        return (PlayerPrefs.GetInt("Difficulty", 1) + 1)/**3*/;
+        return (PlayerPrefs.GetInt("Difficulty", 1) + 1)*3;
     }
 
     public void SetScoreText()
@@ -134,7 +131,17 @@ public class FlappyBirdGameManager : MonoBehaviour
         }
         else
         {
-            scoreText.text = "0/" + GetScoreByDifficulty();
+            scoreText.text = score + "/" + GetScoreByDifficulty();
+        }
+    }
+
+    private void SetTimeScaleByDifficulty()
+    {
+        switch (PlayerPrefs.GetInt("Difficulty", 1))
+        {
+            case 0: Time.timeScale = 0.9f; break;
+            case 1: Time.timeScale = 1f; break;
+            case 2: Time.timeScale = 1.2f; break;
         }
     }
 }

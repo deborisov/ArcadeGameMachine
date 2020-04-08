@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+﻿    using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class GameOverLogic : MonoBehaviour
+public class GameOverLogic
 {
     public GameObject gameOverPage;
 
