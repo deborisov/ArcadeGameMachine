@@ -14,5 +14,10 @@ public class CheckTowerScript : MonoBehaviour
             MainMenu.SetActive(false);
             TowerMenu.SetActive(true);
         }
+        else
+        {
+            MainMenu.SetActive(true);
+            TowerMenu.SetActive(false);
+        }
     }
 }

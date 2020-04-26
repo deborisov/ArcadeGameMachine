@@ -18,14 +18,20 @@ public class GameOverLogic
         GameObject restartButton = gameOverPage.transform.Find("RestartButton").gameObject;
         if (won)
         {
-            gameOverText.GetComponent<TextMeshProUGUI>().text = "Stage cleared!";
-            menuButton.SetActive(false);
-            restartButton.GetComponentInChildren<TextMeshProUGUI>().text = "Next stage";
-            //PlayerPrefs.SetInt("Stage", PlayerPrefs.GetInt("Stage", 0)); //?
-            Button b = restartButton.GetComponent<Button>();
-            b.onClick.RemoveAllListeners();
-            b.onClick.AddListener(PauseMenu.instance.GoToMenu);
-
+            if (PlayerPrefs.GetInt("Tower", 0) == 1)
+            {
+                gameOverText.GetComponent<TextMeshProUGUI>().text = "Stage cleared!";
+                menuButton.SetActive(false);
+                restartButton.GetComponentInChildren<TextMeshProUGUI>().text = "Next stage";
+                //PlayerPrefs.SetInt("Stage", PlayerPrefs.GetInt("Stage", 0)); //?
+                Button b = restartButton.GetComponent<Button>();
+                b.onClick.RemoveAllListeners();
+                b.onClick.AddListener(PauseMenu.instance.GoToMenu);
+            }
+            else
+            {
+                gameOverText.GetComponent<TextMeshProUGUI>().text = "You won!";
+            }
         }
         else
         {

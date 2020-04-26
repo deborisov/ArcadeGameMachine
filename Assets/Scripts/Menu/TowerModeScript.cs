@@ -192,12 +192,14 @@ public class TowerModeScript : MonoBehaviour
                 SaveTowerState();
                 PlayButton.SetActive(false);
             }
+            PlayerPrefs.SetInt("Tower", 0);
         }
         else if (PlayerPrefs.GetInt("Tower", 0) == 1 &&  PlayerPrefs.GetInt("StageCleared", -1) == 0)
         {
             PlayerPrefs.SetInt("StageCleared", -1);
             DisposeTower();
             PlayButton.SetActive(false);
+            PlayerPrefs.SetInt("Tower", 0);
         }
     }
 
