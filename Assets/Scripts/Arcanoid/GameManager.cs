@@ -111,6 +111,8 @@ public class GameManager : MonoBehaviour
 
     public void Menu()
     {
+        var audioManager = FindObjectOfType<AudioManager>();
+        Destroy(audioManager.gameObject);
         SceneManager.LoadScene("Menu");
     }
 }

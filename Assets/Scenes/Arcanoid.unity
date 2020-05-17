@@ -1597,7 +1597,7 @@ PolygonCollider2D:
       - {x: -0.6356623, y: 1.3670998}
       - {x: -1.5312518, y: 0.0010880213}
       - {x: -1.5291227, y: -0.5429435}
-      - {x: 1.5093968, y: -0.51901835}
+      - {x: 1.5445111, y: -0.5190181}
       - {x: 1.5267301, y: 0.09215067}
 --- !u!50 &1597261836
 Rigidbody2D:
@@ -2285,6 +2285,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6930785058491575830, guid: 0e7bbc872d6c6bc4b9eeee9bbf00d9cf,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0e7bbc872d6c6bc4b9eeee9bbf00d9cf, type: 3}

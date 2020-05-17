@@ -1411,9 +1411,9 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: Theme
     clip: {fileID: 8300000, guid: b605cd45f4f89b24dba937a6992e06f5, type: 3}
-    volume: 0.3
+    volume: 0.7
     pitch: 1
-    loop: 0
+    loop: 1
     source: {fileID: 0}
 --- !u!4 &1452780916
 Transform:

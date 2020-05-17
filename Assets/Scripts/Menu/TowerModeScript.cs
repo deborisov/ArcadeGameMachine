@@ -51,15 +51,12 @@ public class TowerModeScript : MonoBehaviour
             DisplayTower(curStages);
         }
         StartCoroutine(CheckPlayerWon());
-
     }
 
     void SetBottom()
     {
         var boxCollider = Bottom.GetComponent<BoxCollider2D>();
         Vector2 screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
-        //Bottom.transform.position = new Vector2(0, -screenBounds.y - 1f);
-        //Bottom.transform.forward = new Vector2(2 * screenBounds.x + 1.5f, 1);
         boxCollider.size = new Vector2(2 * screenBounds.x + 1.5f, 1);
         boxCollider.offset = new Vector2(0, -screenBounds.y - 0.5f);
         boxCollider.isTrigger = false;
